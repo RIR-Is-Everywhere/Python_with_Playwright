@@ -1,0 +1,28 @@
+from playwright.sync_api import sync_playwright
+
+
+def test_open_site_login():
+    with sync_playwright() as p:
+        # Launch browser (headless=False shows the browser)
+        browser = p.chromium.launch(headless=False)
+       
+        # Open a new page
+        page = browser.new_page()
+       
+        # Go to SauceDemo website
+        page.goto("https://www.saucedemo.com/")
+       
+        # Print page title
+        print("Page Title:", page.title())
+       
+        # --- LOGIN USING IDs ---
+        page.fill('#user-name', 'standard_user')   # Fill username
+        page.fill('#password', 'secret_sauce')     # Fill password
+        page.click('#login-button')                # Click login button
+       
+        # Verify login by checking URL or page title
+        print("After login, Page Title:", page.title())
+     
+       
+        # Close browser
+        browser.close()
