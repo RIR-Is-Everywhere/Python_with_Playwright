@@ -1,0 +1,56 @@
+from playwright.sync_api import sync_playwright
+
+
+def login(page,username,password):
+        # --- LOGIN USING IDs ---
+        page.locator("//input[@data-test='username']").fill(username)
+        page.wait_for_timeout(3000)
+        page.locator("#password").fill(password)
+        page.wait_for_timeout(3000)    # Fill password
+        page.click('#login-button')  
+        page.wait_for_timeout(3000)  
+
+
+def test_valid_login():
+     with sync_playwright() as p:
+         browser = p.chromium.launch(headless=False)
+         page = browser.new_page()
+         
+         page.goto("https://www.saucedemo.com/")
+         
+         login(page,"standard_user","secret_sauce")
+         
+         assert "inventory" in page.url
+         
+         browser.close()
+         
+         
+def test_invalid_login():
+     with sync_playwright() as p:
+         browser = p.chromium.launch(headless=False)
+         page = browser.new_page()
+         
+         page.goto("https://www.saucedemo.com/")
+         
+         login(page,"standard_user","secret_sauce123")
+         
+         error_msg = page.locator("h3[data-test='error']").inner_text()
+         
+         assert "Username and password do not match hello" in error_msg
+         
+         browser.close()    
+         
+def test_invalid_2_login():
+     with sync_playwright() as p:
+         browser = p.chromium.launch(headless=False)
+         page = browser.new_page()
+         
+         page.goto("https://www.saucedemo.com/")
+         
+         login(page,"standard_user","secret_sauce123")
+         
+         error_msg = page.locator("h3[data-test='error']").inner_text()
+         
+         assert "Username and password do not match" in error_msg
+         
+         browser.close()    
